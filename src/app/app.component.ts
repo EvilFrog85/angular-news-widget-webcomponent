@@ -2,9 +2,6 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  template: `<news-widget></news-widget>`
 })
-export class AppComponent {
-  title = 'angular-web-component';
-}
+export class AppComponent {}

@@ -6,6 +6,7 @@ import { createCustomElement } from '@angular/elements';
 
 import { AppComponent } from './app.component';
 import { NewsComponent } from './news/news.component';
+import { NewsDataService } from './news-data.service';
 
 @NgModule({
   declarations: [
@@ -16,13 +17,15 @@ import { NewsComponent } from './news/news.component';
     BrowserModule,
     HttpClientModule
   ],
-  providers: [],
-  bootstrap: [AppComponent, NewsComponent]
+  entryComponents: [NewsComponent],
+  //bootstrap: [AppComponent, NewsComponent]
+  providers: [NewsDataService]
 })
 export class AppModule {
-  constructor(private injector: Injector) {
-    const el = createCustomElement(NewsComponent, { injector });
+  constructor(private injector: Injector) {}
+
+  ngDoBootstrap() {
+    const el = createCustomElement(NewsComponent, { injector: this.injector });
     customElements.define('news-widget', el);
   }
-  ngDoBootstrap() {}
 }

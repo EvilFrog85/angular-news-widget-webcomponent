@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs/internal/operators/map';
 
 import { TopHeadlines } from './types/TopHeadlines';
 
@@ -13,7 +14,7 @@ export class NewsDataService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getNews(){
-    return this.httpClient.get<TopHeadlines>(`https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=${this.apiKeyNotSharedInRepo ? this.apiKeyNotSharedInRepo : this.apiKey}`);
+  getNews(pageSize: string = "10", page: string = "1"){
+    return this.httpClient.get<TopHeadlines>(`https://newsapi.org/v2/top-headlines?pageSize=${parseInt(pageSize)}&page=${parseInt(page)}&sources=techcrunch&apiKey=${this.apiKeyNotSharedInRepo ? this.apiKeyNotSharedInRepo : this.apiKey}`).pipe(map( x => x.articles));
   }
 }

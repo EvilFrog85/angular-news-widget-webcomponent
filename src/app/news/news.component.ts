@@ -1,23 +1,45 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { take } from 'rxjs/internal/operators/take';
 
 import { NewsDataService } from '../news-data.service';
 
 import { Article } from '../types/Article';
-import { TopHeadlines } from '../types/TopHeadlines';
 
 @Component({
   selector: 'news-widget',
-  templateUrl: './news.component.html',
-  styleUrls: ['./news.component.css']
+  template: `
+    <div *ngFor="let article of articles">
+      <h2>{{ article.title }}</h2>
+
+      <img class="news-widget-thumbnail" [src]="article.urlToImage" [alt]="article.title" />
+
+      <p>{{ article.description }}</p>
+
+      <a [href]="article.url">Read full article</a>
+  </div>
+  `,
+  styles: [`
+    .news-widget-thumbnail {
+      width: 160px;
+    }
+  `]
 })
 export class NewsComponent implements OnInit {
+  @Input() pageSize: string | undefined = undefined;
+  @Input() page: string | undefined = undefined;
+
+  @Output() hasLoaded = new EventEmitter<void>();
+
   articles: Article[] = [];
 
-  constructor(private newsDataService: NewsDataService) { }
+  constructor(private newsDataService: NewsDataService) {}
+
   ngOnInit() {
-    this.newsDataService.getNews().pipe(take(1)).subscribe((data: TopHeadlines) => {
-      this.articles = data.articles;
-    });
+    if (this.pageSize && this.page) {
+      this.newsDataService.getNews(this.pageSize, this.page).pipe(take(1)).subscribe((data: Article[]) => {
+        this.articles = data;
+        this.hasLoaded.emit();
+      });
+    }
   }
 }
